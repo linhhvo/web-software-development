@@ -19,7 +19,7 @@ services:
    - ./e2e-tests/tests:/app/tests
 
  database:
-  container_name: wsd_project_database
+  container_name: postgresql_database
   image: postgres:17.0
   restart: unless-stopped
   env_file:

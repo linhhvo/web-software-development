@@ -7,10 +7,10 @@
 
 <input
         type="checkbox"
-        onchange={() => todoState.changeDone(todo.id)}
+        onchange={async () => await todoState.changeDone(todo.id)}
         id={todo.id}
 />
 <label for={todo.id}>
-    {todo.name} ({todo.done ? "done" : "not done"})
+    {todo.name} {todo.id} ({todo.done ? "done" : "not done"})
 </label>
-<button onclick={() => todoState.remove(todo.id)}>Remove</button>
+<button onclick={async () => await todoState.remove(todo.id)}>Remove</button>

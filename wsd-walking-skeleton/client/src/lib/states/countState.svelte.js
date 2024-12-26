@@ -8,7 +8,7 @@ if (browser && localStorage.hasOwnProperty(COUNT_KEY)) {
 
 let countState = $state(initialCount);
 
-const useCountState = () => {
+export const useCountState = () => {
     return {
         get count() {
             return countState;
@@ -20,4 +20,4 @@ const useCountState = () => {
     };
 };
 
-export { useCountState };
+// export { useCountState };

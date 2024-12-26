@@ -1,24 +1,13 @@
 <script>
-    import Todos from "$lib/components/Todos.svelte"
+    import Jokes from "$lib/components/Jokes.svelte";
+    import Errors from "$lib/components/Errors.svelte";
+    import Todos from "$lib/components/Todos.svelte";
 </script>
 
-<Todos />
+<!--<PokemonCards/>-->
 
+<!--<Jokes/>-->
 
-<!--<script>-->
+<!--<Errors/>-->
 
-<!--import Counter from "../lib/components/Counter.svelte";-->
-<!--import Counter2 from "../lib/components/Counter2.svelte";-->
-<!--</script>-->
-
-<!--<Counter/>-->
-<!--<Counter2/>-->
-
-
-<!--<script>-->
-<!--    import Location from "$lib/components/Location.svelte";-->
-<!--    import Movement from "$lib/components/Movement.svelte";-->
-<!--</script>-->
-
-<!--<Location />-->
-<!--<Movement />-->
+<Todos/>

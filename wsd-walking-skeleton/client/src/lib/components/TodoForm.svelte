@@ -2,10 +2,10 @@
     import { useTodoState } from "$lib/states/todoState.svelte.js";
     let todoState = useTodoState();
 
-    const addTodo = (e) => {
+    const addTodo = async (e) => {
         const todo = Object.fromEntries(new FormData(e.target));
-        todo.id = crypto.randomUUID();
-        todoState.add(todo);
+        // todo.id = crypto.randomUUID();
+        await todoState.add(todo);
         e.target.reset();
         e.preventDefault();
     };

@@ -1,15 +1,10 @@
-import {browser} from "$app/environment"
+import { browser } from "$app/environment";
+import * as todoApi from "$lib/apis/todos-api.js";
 
-const TODOS_KEY = 'todos'
-let initialTodos = []
-if (browser && localStorage.hasOwnProperty(TODOS_KEY)) {
-    initialTodos = JSON.parse(localStorage.getItem(TODOS_KEY))
-}
+let todoState = $state([]);
 
-let todoState = $state(initialTodos);
-
-const saveTodos = () => {
-    localStorage.setItem(TODOS_KEY, JSON.stringify(todoState))
+if (browser) {
+    todoState = await todoApi.readTodos();
 }
 
 const useTodoState = () => {
@@ -17,18 +12,19 @@ const useTodoState = () => {
         get todos() {
             return todoState;
         },
-        add: (todo) => {
-            todoState.push(todo);
-            saveTodos()
+        add: async (todo) => {
+            const newTodo = await todoApi.createTodo(todo.name, todo.done);
+            todoState.push(newTodo);
+            console.log(todoState)
         },
-        changeDone: (id) => {
-            const todo = todoState.find((todo) => todo.id === id);
-            todo.done = !todo.done;
-            saveTodos()
+        changeDone: async (id) => {
+            const updatedTodo = await todoApi.changeDone(id)
+            updatedTodo.done = !updatedTodo.done
+            console.log(todoState)
         },
-        remove: (id) => {
-            todoState = todoState.filter((todo) => todo.id !== id);
-            saveTodos()
+        remove: async (id) => {
+            const removedTodo = await todoApi.deleteTodo(id);
+            todoState = todoState.filter((todo) => todo.id !== removedTodo.id);
         },
     };
 };
