@@ -15,3 +15,5 @@ deno.lock
 .env.*
 !.env.example
 !.env.test
+
+.http
