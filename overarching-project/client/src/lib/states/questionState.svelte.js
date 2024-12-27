@@ -1,17 +1,12 @@
 import {browser} from "$app/environment"
+import * as questionApi from "../apis/questions-api.js"
 
-const QUESTIONS_KEY = 'questions'
-let initialQuestions = []
+let questionState = $state([])
 
-if (browser && localStorage.hasOwnProperty(QUESTIONS_KEY)) {
-    initialQuestions = JSON.parse(localStorage.getItem(QUESTIONS_KEY))
-    console.log(initialQuestions)
-}
 
-let questionState = $state(initialQuestions)
 
-const saveQuestions = () => {
-    localStorage.setItem(QUESTIONS_KEY, JSON.stringify(questionState))
+if (browser) {
+    questionState = await questionApi.getQuestions()
 }
 
 
@@ -20,18 +15,17 @@ const useQuestionState = () => {
       get questions() {
           return questionState
       },
-      add: (question) => {
-          questionState.push(question)
-          saveQuestions()
+      add: async (question) => {
+          await questionApi.addQuestion(question)
+          questionState = await questionApi.getQuestions()
       },
-      delete: (questionId) => {
-          questionState = questionState.filter((q) => q.id !== questionId)
-          saveQuestions()
+      delete: async (questionId) => {
+          await questionApi.deleteQuestion(questionId)
+          questionState = await questionApi.getQuestions()
       },
-      upvote: (questionId) => {
-          const question = questionState.find((q) => q.id === questionId)
-          question.votes++
-          saveQuestions()
+      upvote: async (questionId) => {
+          await questionApi.upvoteQuestion(questionId)
+          questionState = await questionApi.getQuestions()
       }
   }
 }

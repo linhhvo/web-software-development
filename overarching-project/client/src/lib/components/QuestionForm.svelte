@@ -2,12 +2,11 @@
     import {useQuestionState} from "../states/questionState.svelte.js";
     let questionState = useQuestionState()
 
-    const addQuestion = (e) => {
+    const addQuestion = async (e) => {
         const question = Object.fromEntries(new FormData(e.target))
-        question.id = crypto.randomUUID()
-        question.votes = 0
-
-        questionState.add(question)
+        // question.id = crypto.randomUUID()
+        // question.votes = 0
+        await questionState.add(question)
         e.target.reset()
         e.preventDefault()
     }
@@ -22,9 +21,9 @@
     </div>
     <br>
     <div>
-        <label for="content">Question Content</label>
+        <label for="text">Question Content</label>
         <br>
-        <textarea id="content" name="content" placeholder="Enter the content of the question"></textarea>
+        <textarea id="text" name="text" placeholder="Enter the content of the question"></textarea>
     </div>
     <br>
     <input type="submit" value="Add Question">

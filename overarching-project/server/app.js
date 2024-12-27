@@ -1,11 +1,15 @@
 import { Hono } from "@hono/hono";
-// import { cors } from "@hono/hono/cors";
+import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
 
 
 const app = new Hono();
 
-app.use(logger());
+app.use("/*", cors());
+app.use("/*", logger());
+
+
+let questions = []
 
 app.get("/courses", (c) => {
     return c.json({courses: [ {id: 1, name: "Web Software Development" }, {id: 2, name: "Device-Agnostic Design" } ] })
@@ -22,17 +26,30 @@ app.post('/courses', async (c) => {
     return c.json({course: {id: 3, name: courseName} })
 })
 
-app.get('/courses/:id/topics', (c) => {
-    return c.json({topics: [ { id: 1, name: "Topic 1" }, {id: 2, name: "Topic 2" } ] })
+app.get('/courses/:id/questions', (c) => {
+    return c.json(questions)
 })
 
-app.get('/courses/:cId/topics/:tId/posts', (c) => {
-    return c.json({posts: [ {id: 1, title: "Post 1" }, {id: 2, title: "Post 2" } ] })
+app.post('/courses/:id/questions', async (c) => {
+    const data = await c.req.json()
+    data.id = questions.length + 1
+    data.upvotes = 0
+    questions.push(data)
+    return c.json(data)
 })
 
-app.get('/courses/:cId/topics/:tId/posts/:pId', (c) => {
-    const postId = c.req.param('pId')
-    return c.json({post: {id: Number(postId), title: "Post Title" }, answers: [ { id: 1, content: "Answer 1" }, {id: 2, content: "Answer 2" } ] })
+app.post('/courses/:id/questions/:qId/upvote', (c) => {
+    const questionId = Number(c.req.param('qId'))
+    const targetQuestion = questions.find((q) => q.id === questionId)
+    targetQuestion.upvotes++
+    return c.json(targetQuestion)
+})
+
+app.delete('/courses/:id/questions/:qId', (c) => {
+    const questionId = Number(c.req.param('qId'))
+    const targetQuestion = questions.find((q) => q.id === questionId)
+    questions = questions.filter((q) => q.id !== (questionId))
+    return c.json(targetQuestion)
 })
 
 export default app;
