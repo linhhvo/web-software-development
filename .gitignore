@@ -1,12 +1,11 @@
 # Default ignored files
 /shelf/
-/.idea/workspace.xml
+.idea
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-/.idea
 deno.lock
 
 # Env
@@ -16,4 +15,26 @@ deno.lock
 !.env.example
 !.env.test
 
-.http
+*.http
+
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
