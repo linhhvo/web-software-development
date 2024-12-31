@@ -1,10 +1,14 @@
 {
   "imports": {
     "@hono/hono": "jsr:@hono/hono@4.6.5",
-    "postgres": "https://deno.land/x/postgresjs@v3.4.4/mod.js"
+    "postgres": "https://deno.land/x/postgresjs@v3.4.4/mod.js",
+    "zod": "https://deno.land/x/zod@v3.23.8/mod.ts",
+    "zValidator": "npm:@hono/zod-validator",
+    "@supabase/supabase-js": "jsr:@supabase/supabase-js@2",
+    "dotenv": "https://deno.land/std@0.193.0/dotenv/mod.ts"
   },
   "deploy": {
-    "project": "faa90b37-ae8e-4492-9b5d-5647d05a86da",
+    "project": "WSD-project",
     "exclude": [
       "**/node_modules"
     ],
