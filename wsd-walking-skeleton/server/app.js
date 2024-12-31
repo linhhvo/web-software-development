@@ -1,15 +1,15 @@
 import { Hono } from "@hono/hono";
 import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
-import postgres from "postgres"
-import {load} from "dotenv"
+import postgres from "postgres";
 
 // import * as todosRepo from "./data-repo/todosRepository.js"
 // import {createTodoValidator, updateTodoValidator} from "./validators.js";
-// import * as bookRepo from "./data-repo/bookRepository.js";
 // import * as itemRepository from "./data-repo/itemRepository.js"
 // import {addCount, getCount} from "./data-repo/feedbackRepository.js";
 // import {supabase} from "./supabaseClient.js";
+import * as bookController from "./books-exercises/bookController.js";
+import * as ratingController from "./books-exercises/ratingController.js";
 
 
 const app = new Hono();
@@ -20,48 +20,48 @@ app.use("/*", logger());
 
 /** postgresql deployment **/
 
-const env = await load()
-
-const BANNED_WORDS = [
-    "delete", "update", "insert", "drop", "alter", "create",
-    "truncate", "replace", "merge", "grant", "revoke",
-    "transaction", "commit", "rollback", "savepoint", "lock",
-    "execute", "call", "do", "set", "comment"
-];
-
-const query = async (query) => {
-    // check that the query does not do data manipulation
-    for (const word of BANNED_WORDS) {
-        if (query.toLowerCase().includes(word)) {
-            throw new Error(`You cannot ${word} data`);
-        }
-    }
-
-
-    const sql = postgres(env.DATABASE_URL);
-    return await sql.unsafe(query);
-};
-
-app.get("/*", (c) => {
-    return c.html(`
-    <html>
-      <head>
-        <title>Hello, world!</title>
-      </head>
-      <body>
-        <h1>Hello, world!</h1>
-        <p>To use this, make a POST with a JSON document in the request body. The query property of the JSON document will be used to query a database.</p>
-        <p>There are no tables though, so you can only do simple queries like "SELECT 1 + 1".</p>
-      </body>
-    </html>
-    `);
-});
-
-app.post("/*", async (c) => {
-    const body = await c.req.json();
-    const result = await query(body.query);
-    return c.json({result: result});
-});
+// const env = await load()
+//
+// const BANNED_WORDS = [
+//     "delete", "update", "insert", "drop", "alter", "create",
+//     "truncate", "replace", "merge", "grant", "revoke",
+//     "transaction", "commit", "rollback", "savepoint", "lock",
+//     "execute", "call", "do", "set", "comment"
+// ];
+//
+// const query = async (query) => {
+//     // check that the query does not do data manipulation
+//     for (const word of BANNED_WORDS) {
+//         if (query.toLowerCase().includes(word)) {
+//             throw new Error(`You cannot ${word} data`);
+//         }
+//     }
+//
+//
+//     const sql = postgres(env.DATABASE_URL);
+//     return await sql.unsafe(query);
+// };
+//
+// app.get("/*", (c) => {
+//     return c.html(`
+//     <html>
+//       <head>
+//         <title>Hello, world!</title>
+//       </head>
+//       <body>
+//         <h1>Hello, world!</h1>
+//         <p>To use this, make a POST with a JSON document in the request body. The query property of the JSON document will be used to query a database.</p>
+//         <p>There are no tables though, so you can only do simple queries like "SELECT 1 + 1".</p>
+//       </body>
+//     </html>
+//     `);
+// });
+//
+// app.post("/*", async (c) => {
+//     const body = await c.req.json();
+//     const result = await query(body.query);
+//     return c.json({result: result});
+// });
 
 
 /** feedback deno kv exercise **/
@@ -168,40 +168,25 @@ app.post("/*", async (c) => {
 
 /** books exercise **/
 
-// app.get('/books', async (c) => {
-//     const books = await bookRepo.readAll()
-//     return c.json(books)
-// })
-//
-// app.post('/books', async (c) => {
-//     const book = await c.req.json()
-//     const newBook = await bookRepo.create(book)
-//     return c.json(newBook)
-// })
-//
-// app.get('/books/:bookId', async (c) => {
-//     const book = await bookRepo.readOne(c.req.param('bookId'))
-//     return c.json(book)
-// })
-//
-// app.put('/books/:bookId', async (c) => {
-//     const newBook = await c.req.json()
-//     const updatedBook = await bookRepo.update(c.req.param('bookId'), newBook)
-//     return c.json(updatedBook)
-// })
-//
-// app.delete('/books/:bookId', async (c) => {
-//     const deletedBook = await bookRepo.remove(c.req.param('bookId'))
-//     return c.json(deletedBook)
-// })
+app.get('/books', bookController.getBooks);
 
-// app.get('/books/:bookId/comments', (c) => c.json ({purpose: `get comments for book with id ${c.req.param('bookId')}`}))
-//
-// app.post('/books/:bookId/comments', (c) => c.json ({purpose: `add comment for book with id ${c.req.param('bookId')}`}))
-//
-// app.delete('/books/:bookId/comments/:commentId', (c) => c.json (
-//     {purpose: `delete comment with id ${c.req.param('commentId')} from book with id ${c.req.param('bookId')}`}))
+app.post('/books', ...bookController.createBook);
 
+app.get('/books/:bookId', bookController.getBook);
+
+app.put('/books/:bookId', ...bookController.updateBook);
+
+app.delete('/books/:bookId', bookController.deleteBook);
+
+app.get('/books/:bookId/ratings', ratingController.getRatings);
+
+app.get('/books/:bookId/ratings/:ratingId', ratingController.getOneRating);
+
+app.post('/books/:bookId/ratings', ...ratingController.addRating);
+
+app.put('/books/:bookId/ratings/:ratingId', ...ratingController.updateRating);
+
+app.delete('/books/:bookId/ratings/:ratingId', ratingController.deleteRating);
 
 
 export default app;
