@@ -2,14 +2,15 @@ import { Hono } from "@hono/hono";
 import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
 import postgres from "postgres";
-
-// import * as todosRepo from "./data-repo/todosRepository.js"
-// import {createTodoValidator, updateTodoValidator} from "./validators.js";
+import { zValidator } from "zValidator";
 // import * as itemRepository from "./data-repo/itemRepository.js"
 // import {addCount, getCount} from "./data-repo/feedbackRepository.js";
 // import {supabase} from "./supabaseClient.js";
 import * as bookController from "./books-exercises/bookController.js";
 import * as ratingController from "./books-exercises/ratingController.js";
+
+import * as todosRepo from "./data-repo/todosRepository.js";
+import * as validators from "./validators.js";
 
 
 const app = new Hono();
@@ -103,35 +104,41 @@ app.use("/*", logger());
 
 /** Todos exercise **/
 
-// app.get("/todos", async (c) => {
-//     const todos = await todosRepo.getTodos()
-//     return c.json(todos);
+app.get("/todos", async (c) => {
+  const todos = await todosRepo.getTodos();
+  return c.json(todos);
+});
+
+app.post("/todos", zValidator("json", validators.createTodoValidator), async (c) => {
+  const todo = c.req.valid('json');
+  const newTodo = await todosRepo.createTodo(todo);
+  return c.json(newTodo);
+});
+
+app.get("/todos/:id", async (c) => {
+  const todoId = c.req.param('id');
+  const todo = await todosRepo.getOneTodo(todoId);
+  return c.json(todo);
+});
+
+app.delete("/todos/:id", async (c) => {
+  const todoId = c.req.param('id');
+  const deletedTodo = await todosRepo.deleteTodo(todoId);
+  return c.json(deletedTodo);
+});
+
+// app.put('/todos/:id', zValidator('json', validators.updateTodoValidator), async (c) => {
+//   const id = c.req.param('id');
+//   const newTodo = c.req.valid('json');
+//   const updatedTodo = await todosRepo.updateTodo(id, newTodo);
+//   return c.json(updatedTodo);
 // });
-//
-// app.post("/todos", zValidator("json", createTodoValidator), async (c) => {
-//     const todo = c.req.valid('json')
-//     const newTodo = await todosRepo.createTodo(todo)
-//     return c.json(newTodo);
-// });
-//
-// app.get("/todos/:id", async (c) => {
-//     const todoId = c.req.param('id')
-//     const todo = await todosRepo.getOneTodo(todoId)
-//     return c.json(todo)
-// })
-//
-// app.delete("/todos/:id", async (c) => {
-//     const todoId = c.req.param('id')
-//     const deletedTodo = await todosRepo.deleteTodo(todoId)
-//     return c.json(deletedTodo)
-// });
-//
-// app.put('/todos/:id', zValidator('json', updateTodoValidator), async (c) => {
-//     const id = c.req.param('id')
-//     const newTodo = c.req.valid('json')
-//     const updatedTodo = await todosRepo.updateTodo(id, newTodo)
-//     return c.json(updatedTodo)
-// })
+
+app.put('/todos/:id', async (c) => {
+  const id = c.req.param('id');
+  const updatedTodo = await todosRepo.updateTodo(id);
+  return c.json(updatedTodo);
+});
 
 /** Pokemon cards exercise **/
 
@@ -169,23 +176,15 @@ app.use("/*", logger());
 /** books exercise **/
 
 app.get('/books', bookController.getBooks);
-
 app.post('/books', ...bookController.createBook);
-
 app.get('/books/:bookId', bookController.getBook);
-
 app.put('/books/:bookId', ...bookController.updateBook);
-
 app.delete('/books/:bookId', bookController.deleteBook);
 
 app.get('/books/:bookId/ratings', ratingController.getRatings);
-
 app.get('/books/:bookId/ratings/:ratingId', ratingController.getOneRating);
-
 app.post('/books/:bookId/ratings', ...ratingController.addRating);
-
 app.put('/books/:bookId/ratings/:ratingId', ...ratingController.updateRating);
-
 app.delete('/books/:bookId/ratings/:ratingId', ratingController.deleteRating);
 
 

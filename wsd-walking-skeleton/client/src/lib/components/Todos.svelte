@@ -1,15 +1,12 @@
 <script>
-    import TodoForm from "./TodoForm.svelte";
-    import TodoList from "./TodoList.svelte";
-
+  import TodoForm from "./TodoForm.svelte";
+  import TodoList from "./TodoList.svelte";
 </script>
 
-<h1>Todos</h1>
+<h2 class="font-medium text-xl pb-6 underline">Add todo</h2>
 
-<h2>Add Todo</h2>
+<TodoForm/>
 
-<TodoForm />
+<h2 class="font-medium text-xl pt-6 underline">Existing todos</h2>
 
-<h2>Existing todos</h2>
-
-<TodoList />
+<TodoList/>

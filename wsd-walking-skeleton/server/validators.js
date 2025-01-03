@@ -1,26 +1,24 @@
 import { z } from 'zod';
 
-const bookValidator = z.object({
+export const bookValidator = z.object({
   title: z.string().min(1),
   year : z.coerce.number().min(-500).max(2050)
 });
 
-const ratingValidator = z.object({
+export const ratingValidator = z.object({
   rating  : z.coerce.number().min(1).max(5),
   feedback: z.string()
 });
 
-export { bookValidator, ratingValidator };
 
-// const createTodoValidator = z.object({
-//     name: z.string().min(3).max(30),
-//     done: z.coerce.boolean().default(false)
-// });
-//
-// const updateTodoValidator = createTodoValidator.extend({
-//     done: z.coerce.boolean()
-// })
-// export {createTodoValidator, updateTodoValidator}
+export const createTodoValidator = z.object({
+  name: z.string().min(3).max(30),
+  done: z.coerce.boolean().default(false)
+});
+
+export const updateTodoValidator = createTodoValidator.extend({
+  done: z.coerce.boolean()
+});
 
 
 // const todoValidator = z.object({
