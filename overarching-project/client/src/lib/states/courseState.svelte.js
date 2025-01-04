@@ -12,9 +12,12 @@ export const useCourseState = () => {
     get courses () {
       return courseState;
     },
-    add: async (newCourse) => {
+    add         : async (newCourse) => {
       await courseApi.addCourse(newCourse);
       courseState = await courseApi.getCourses();
+    },
+    getOneCourse: async (courseId) => {
+      return await courseApi.getOneCourse(courseId);
     }
   };
 };

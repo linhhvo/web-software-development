@@ -1,17 +1,19 @@
 <script>
+  import { page } from '$app/state';
   import { useQuestionState } from "$lib/states/questionState.svelte.js";
 
+  let courseId = page.params.id;
   let questionState = useQuestionState();
 
   const addQuestion = async (e) => {
     const question = Object.fromEntries(new FormData(e.target));
-    await questionState.add(question);
+    await questionState.add(courseId, question);
     e.target.reset();
     e.preventDefault();
   };
 </script>
 
-<h1>Add question</h1>
+<h2>Add question</h2>
 <form onsubmit={addQuestion}>
   <div>
     <label for="title">Title</label>

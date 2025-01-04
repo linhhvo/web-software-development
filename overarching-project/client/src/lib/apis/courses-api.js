@@ -16,3 +16,8 @@ export const addCourse = async (newCourse) => {
 
   return await res.json();
 };
+
+export const getOneCourse = async (courseId) => {
+  const res = await fetch(`${PUBLIC_API_URL}/api/courses/${courseId}`);
+  return await res.json();
+};

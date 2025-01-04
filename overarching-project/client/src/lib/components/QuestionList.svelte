@@ -6,7 +6,7 @@
 
 </script>
 
-<h1>Questions list</h1>
+<h2>Questions list</h2>
 <ul>
   {#each questionState.questions as question}
     <li>
