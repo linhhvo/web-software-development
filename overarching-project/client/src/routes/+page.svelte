@@ -1,5 +1,4 @@
-<script>
-import Questions from "../lib/components/Questions.svelte";
-</script>
+<script></script>
 
-<Questions />
+<h1>Welcome</h1>
+<a href="/courses">Courses</a>

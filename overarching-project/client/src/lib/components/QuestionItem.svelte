@@ -1,8 +1,9 @@
 <script>
-    import {useQuestionState} from "../states/questionState.svelte.js";
-    let questionState = useQuestionState()
+  import { useQuestionState } from "$lib/states/questionState.svelte.js";
 
-    let {question} = $props()
+  let questionState = useQuestionState();
+
+  let {question} = $props();
 </script>
 
 <label for={question.id}>{question.title} - Upvotes: {question.upvotes}</label>
