@@ -1,2 +1,1 @@
-<h1>Welcome</h1>
-<a href="/courses">Courses</a>
+<h1 class="h1 ml-6 text-center">Welcome!</h1>

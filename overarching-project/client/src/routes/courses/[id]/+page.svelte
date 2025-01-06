@@ -15,7 +15,6 @@
   };
 
   $effect(() => {
-    console.log(courseId);
     getCurrentCourse();
     questionState.getAll(courseId);
   });
@@ -23,8 +22,8 @@
 </script>
 
 {#if Object.keys(currentCourse).length === 0}
-  <h1>No course found</h1>
+  <h2 class="h2 text-3xl font-semibold text-success-500">No course found</h2>
 {:else}
-  <h1>{currentCourse.name}</h1>
+  <h2 class="h2 text-3xl font-semibold text-success-500 mb-6">{currentCourse.name}</h2>
   <Questions/>
 {/if}

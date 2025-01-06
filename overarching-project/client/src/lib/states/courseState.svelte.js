@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import * as courseApi from '../apis/courses-api.js';
+import * as courseApi from '$lib/apis/courses-api.js';
 
 let courseState = $state([]);
 
