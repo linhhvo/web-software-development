@@ -2,15 +2,12 @@ import { Hono } from "@hono/hono";
 import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
 import postgres from "postgres";
-import { zValidator } from "zValidator";
+import { hash, verify } from 'scrypt';
 // import * as itemRepository from "./data-repo/itemRepository.js"
 // import {addCount, getCount} from "./data-repo/feedbackRepository.js";
 // import {supabase} from "./supabaseClient.js";
-import * as bookController from "./books-exercises/bookController.js";
-import * as ratingController from "./books-exercises/ratingController.js";
-
-import * as todosRepo from "./data-repo/todosRepository.js";
-import * as validators from "./validators.js";
+// import * as bookController from "./books-exercises/bookController.js";
+// import * as ratingController from "./books-exercises/ratingController.js";
 
 
 const app = new Hono();
@@ -19,50 +16,47 @@ const sql = postgres();
 app.use("/*", cors());
 app.use("/*", logger());
 
-/** postgresql deployment **/
+/** authentication and authorization example **/
+app.post("/api/auth/register", async (c) => {
+  const data = await c.req.json();
+  try {
+    const result = await sql`INSERT INTO users (email, password_hash)
+                             VALUES (${data.email.trim().toLowerCase()},
+                                     ${hash(data.password.trim())}) RETURNING *`;
+    return c.json({"message": `Confirmation email sent to address ${data.email.trim().toLowerCase()}.`});
+  }
+  catch (error) {
+    return c.json({"message": `Confirmation email sent to address ${data.email.trim().toLowerCase()}.`});
+  }
+});
 
-// const env = await load()
-//
-// const BANNED_WORDS = [
-//     "delete", "update", "insert", "drop", "alter", "create",
-//     "truncate", "replace", "merge", "grant", "revoke",
-//     "transaction", "commit", "rollback", "savepoint", "lock",
-//     "execute", "call", "do", "set", "comment"
-// ];
-//
-// const query = async (query) => {
-//     // check that the query does not do data manipulation
-//     for (const word of BANNED_WORDS) {
-//         if (query.toLowerCase().includes(word)) {
-//             throw new Error(`You cannot ${word} data`);
-//         }
-//     }
-//
-//
-//     const sql = postgres(env.DATABASE_URL);
-//     return await sql.unsafe(query);
-// };
-//
-// app.get("/*", (c) => {
-//     return c.html(`
-//     <html>
-//       <head>
-//         <title>Hello, world!</title>
-//       </head>
-//       <body>
-//         <h1>Hello, world!</h1>
-//         <p>To use this, make a POST with a JSON document in the request body. The query property of the JSON document will be used to query a database.</p>
-//         <p>There are no tables though, so you can only do simple queries like "SELECT 1 + 1".</p>
-//       </body>
-//     </html>
-//     `);
-// });
-//
-// app.post("/*", async (c) => {
-//     const body = await c.req.json();
-//     const result = await query(body.query);
-//     return c.json({result: result});
-// });
+app.post("/api/auth/login", async (c) => {
+  const data = await c.req.json();
+  const result = await sql`SELECT *
+                           FROM users
+                           WHERE email = ${data.email.trim().toLowerCase()}`;
+
+  if (result.length === 0) {
+    c.status(401);
+    return c.json({
+      "message": "Invalid email or password!"
+    });
+  }
+
+  const user = result[0];
+  const passwordValid = verify(data.password.trim(), user.password_hash);
+  if (passwordValid) {
+    return c.json({
+      "message": `Logged in as user with id ${user.id}`
+    });
+  }
+  else {
+    c.status(401);
+    return c.json({
+      "message": "Invalid email or password!"
+    });
+  }
+});
 
 
 /** feedback deno kv exercise **/
@@ -104,28 +98,28 @@ app.use("/*", logger());
 
 /** Todos exercise **/
 
-app.get("/todos", async (c) => {
-  const todos = await todosRepo.getTodos();
-  return c.json(todos);
-});
-
-app.post("/todos", zValidator("json", validators.createTodoValidator), async (c) => {
-  const todo = c.req.valid('json');
-  const newTodo = await todosRepo.createTodo(todo);
-  return c.json(newTodo);
-});
-
-app.get("/todos/:id", async (c) => {
-  const todoId = c.req.param('id');
-  const todo = await todosRepo.getOneTodo(todoId);
-  return c.json(todo);
-});
-
-app.delete("/todos/:id", async (c) => {
-  const todoId = c.req.param('id');
-  const deletedTodo = await todosRepo.deleteTodo(todoId);
-  return c.json(deletedTodo);
-});
+// app.get("/todos", async (c) => {
+//   const todos = await todosRepo.getTodos();
+//   return c.json(todos);
+// });
+//
+// app.post("/todos", zValidator("json", validators.createTodoValidator), async (c) => {
+//   const todo = c.req.valid('json');
+//   const newTodo = await todosRepo.createTodo(todo);
+//   return c.json(newTodo);
+// });
+//
+// app.get("/todos/:id", async (c) => {
+//   const todoId = c.req.param('id');
+//   const todo = await todosRepo.getOneTodo(todoId);
+//   return c.json(todo);
+// });
+//
+// app.delete("/todos/:id", async (c) => {
+//   const todoId = c.req.param('id');
+//   const deletedTodo = await todosRepo.deleteTodo(todoId);
+//   return c.json(deletedTodo);
+// });
 
 // app.put('/todos/:id', zValidator('json', validators.updateTodoValidator), async (c) => {
 //   const id = c.req.param('id');
@@ -134,11 +128,11 @@ app.delete("/todos/:id", async (c) => {
 //   return c.json(updatedTodo);
 // });
 
-app.put('/todos/:id', async (c) => {
-  const id = c.req.param('id');
-  const updatedTodo = await todosRepo.updateTodo(id);
-  return c.json(updatedTodo);
-});
+// app.put('/todos/:id', async (c) => {
+//   const id = c.req.param('id');
+//   const updatedTodo = await todosRepo.updateTodo(id);
+//   return c.json(updatedTodo);
+// });
 
 /** Pokemon cards exercise **/
 
@@ -175,17 +169,17 @@ app.put('/todos/:id', async (c) => {
 
 /** books exercise **/
 
-app.get('/books', bookController.getBooks);
-app.post('/books', ...bookController.createBook);
-app.get('/books/:bookId', bookController.getBook);
-app.put('/books/:bookId', ...bookController.updateBook);
-app.delete('/books/:bookId', bookController.deleteBook);
-
-app.get('/books/:bookId/ratings', ratingController.getRatings);
-app.get('/books/:bookId/ratings/:ratingId', ratingController.getOneRating);
-app.post('/books/:bookId/ratings', ...ratingController.addRating);
-app.put('/books/:bookId/ratings/:ratingId', ...ratingController.updateRating);
-app.delete('/books/:bookId/ratings/:ratingId', ratingController.deleteRating);
+// app.get('/books', bookController.getBooks);
+// app.post('/books', ...bookController.createBook);
+// app.get('/books/:bookId', bookController.getBook);
+// app.put('/books/:bookId', ...bookController.updateBook);
+// app.delete('/books/:bookId', bookController.deleteBook);
+//
+// app.get('/books/:bookId/ratings', ratingController.getRatings);
+// app.get('/books/:bookId/ratings/:ratingId', ratingController.getOneRating);
+// app.post('/books/:bookId/ratings', ...ratingController.addRating);
+// app.put('/books/:bookId/ratings/:ratingId', ...ratingController.updateRating);
+// app.delete('/books/:bookId/ratings/:ratingId', ratingController.deleteRating);
 
 
 export default app;
