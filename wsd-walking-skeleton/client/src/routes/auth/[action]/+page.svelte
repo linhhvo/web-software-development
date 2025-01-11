@@ -1,36 +1,20 @@
 <script>
-  import { PUBLIC_API_URL } from "$env/static/public";
-
-  let {data} = $props();
-  let message = $state("");
-
-  const handleForm = async (e) => {
-    const user = Object.fromEntries(new FormData(e.target));
-
-    const response = await fetch(`${PUBLIC_API_URL}/api/auth/${data.action}`, {
-      method : "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body   : JSON.stringify(user)
-    });
-
-    const jsonData = await response.json();
-    message = jsonData.message;
-
-    e.preventDefault();
-  };
+  let {data, form} = $props();
 </script>
 
-<h2 class="text-xl py-4">
+<h2 class="text-xl pb-4">
   {data.action === "login" ? "Login" : "Register"} form
 </h2>
 
-{#if message}
-  <p class="text-xl mb-4">Message from server: {message}</p>
+{#if form?.message}
+  <p class="text-xl">{form.message}</p>
 {/if}
 
-<form class="space-y-4" onsubmit={handleForm}>
+{#if data.registered}
+  <p class="text-xl">You have successfully registered. Please login to continue.</p>
+{/if}
+
+<form class="space-y-4" method="POST" action="?/{data.action}">
   <label class="label" for="email">
     <span class="label-text">Email</span>
     <input
@@ -49,3 +33,22 @@
     {data.action === "login" ? "Login" : "Register"}
   </button>
 </form>
+
+
+<!--<script>-->
+<!--  let {form} = $props();-->
+<!--</script>-->
+
+<!--{#if form?.appendedName}-->
+<!--  <p class="text-xl">{form.appendedName}</p>-->
+<!--{/if}-->
+
+<!--<form class="space-y-4" method="POST" action="?/append">-->
+<!--  <label class="label" for="name">-->
+<!--    <span class="label-text">Name</span>-->
+<!--    <input class="input" id="name" name="name" type="text" placeholder="Name"/>-->
+<!--  </label>-->
+<!--  <button class="w-full btn preset-filled-primary-500" type="submit">-->
+<!--    Append-->
+<!--  </button>-->
+<!--</form>-->

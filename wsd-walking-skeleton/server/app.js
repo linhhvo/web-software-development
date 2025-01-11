@@ -1,22 +1,40 @@
 import { Hono } from "@hono/hono";
 import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
+import { setCookie } from "jsr:@hono/hono@4.6.5/cookie";
 import postgres from "postgres";
 import { hash, verify } from 'scrypt';
+import { zValidator } from "zValidator";
 // import * as itemRepository from "./data-repo/itemRepository.js"
 // import {addCount, getCount} from "./data-repo/feedbackRepository.js";
 // import {supabase} from "./supabaseClient.js";
-// import * as bookController from "./books-exercises/bookController.js";
-// import * as ratingController from "./books-exercises/ratingController.js";
-
+import * as bookController from "./books-exercises/bookController.js";
+import * as ratingController from "./books-exercises/ratingController.js";
+import * as todosRepo from "./data-repo/todosRepository.js";
+import * as validators from "./validators.js";
 
 const app = new Hono();
 const sql = postgres();
 
-app.use("/*", cors());
+app.use("/*", cors({
+  origin     : "http://localhost:5173",
+  credentials: true
+}));
 app.use("/*", logger());
 
+/** cookies example **/
+// const COOKIE_KEY = "count";
+//
+// app.get("/count", async (c) => {
+//   let count = getCookie(c, COOKIE_KEY);
+//   count = count ? parseInt(count) + 1 : 1;
+//   setCookie(c, COOKIE_KEY, count);
+//   return c.json({count});
+// });
+
+
 /** authentication and authorization example **/
+const COOKIE_KEY = 'auth';
 app.post("/api/auth/register", async (c) => {
   const data = await c.req.json();
   try {
@@ -46,6 +64,12 @@ app.post("/api/auth/login", async (c) => {
   const user = result[0];
   const passwordValid = verify(data.password.trim(), user.password_hash);
   if (passwordValid) {
+    setCookie(c, COOKIE_KEY, user.id, {
+      path    : '/',
+      domain  : 'localhost',
+      httpOnly: true,
+      sameSite: "lax"
+    });
     return c.json({
       "message": `Logged in as user with id ${user.id}`
     });
@@ -98,41 +122,41 @@ app.post("/api/auth/login", async (c) => {
 
 /** Todos exercise **/
 
-// app.get("/todos", async (c) => {
-//   const todos = await todosRepo.getTodos();
-//   return c.json(todos);
-// });
-//
-// app.post("/todos", zValidator("json", validators.createTodoValidator), async (c) => {
-//   const todo = c.req.valid('json');
-//   const newTodo = await todosRepo.createTodo(todo);
-//   return c.json(newTodo);
-// });
-//
-// app.get("/todos/:id", async (c) => {
-//   const todoId = c.req.param('id');
-//   const todo = await todosRepo.getOneTodo(todoId);
-//   return c.json(todo);
-// });
-//
-// app.delete("/todos/:id", async (c) => {
-//   const todoId = c.req.param('id');
-//   const deletedTodo = await todosRepo.deleteTodo(todoId);
-//   return c.json(deletedTodo);
-// });
+app.get("/todos", async (c) => {
+  const todos = await todosRepo.getTodos();
+  return c.json(todos);
+});
 
-// app.put('/todos/:id', zValidator('json', validators.updateTodoValidator), async (c) => {
-//   const id = c.req.param('id');
-//   const newTodo = c.req.valid('json');
-//   const updatedTodo = await todosRepo.updateTodo(id, newTodo);
-//   return c.json(updatedTodo);
-// });
+app.post("/todos", zValidator("json", validators.createTodoValidator), async (c) => {
+  const todo = c.req.valid('json');
+  const newTodo = await todosRepo.createTodo(todo);
+  return c.json(newTodo);
+});
 
-// app.put('/todos/:id', async (c) => {
-//   const id = c.req.param('id');
-//   const updatedTodo = await todosRepo.updateTodo(id);
-//   return c.json(updatedTodo);
-// });
+app.get("/todos/:id", async (c) => {
+  const todoId = c.req.param('id');
+  const todo = await todosRepo.getOneTodo(todoId);
+  return c.json(todo);
+});
+
+app.delete("/todos/:id", async (c) => {
+  const todoId = c.req.param('id');
+  const deletedTodo = await todosRepo.deleteTodo(todoId);
+  return c.json(deletedTodo);
+});
+
+app.put('/todos/:id', zValidator('json', validators.updateTodoValidator), async (c) => {
+  const id = c.req.param('id');
+  const newTodo = c.req.valid('json');
+  const updatedTodo = await todosRepo.updateTodo(id, newTodo);
+  return c.json(updatedTodo);
+});
+
+app.put('/todos/:id', async (c) => {
+  const id = c.req.param('id');
+  const updatedTodo = await todosRepo.updateTodo(id);
+  return c.json(updatedTodo);
+});
 
 /** Pokemon cards exercise **/
 
@@ -169,17 +193,17 @@ app.post("/api/auth/login", async (c) => {
 
 /** books exercise **/
 
-// app.get('/books', bookController.getBooks);
-// app.post('/books', ...bookController.createBook);
-// app.get('/books/:bookId', bookController.getBook);
-// app.put('/books/:bookId', ...bookController.updateBook);
-// app.delete('/books/:bookId', bookController.deleteBook);
-//
-// app.get('/books/:bookId/ratings', ratingController.getRatings);
-// app.get('/books/:bookId/ratings/:ratingId', ratingController.getOneRating);
-// app.post('/books/:bookId/ratings', ...ratingController.addRating);
-// app.put('/books/:bookId/ratings/:ratingId', ...ratingController.updateRating);
-// app.delete('/books/:bookId/ratings/:ratingId', ratingController.deleteRating);
+app.get('/books', bookController.getBooks);
+app.post('/books', ...bookController.createBook);
+app.get('/books/:bookId', bookController.getBook);
+app.put('/books/:bookId', ...bookController.updateBook);
+app.delete('/books/:bookId', bookController.deleteBook);
+
+app.get('/books/:bookId/ratings', ratingController.getRatings);
+app.get('/books/:bookId/ratings/:ratingId', ratingController.getOneRating);
+app.post('/books/:bookId/ratings', ...ratingController.addRating);
+app.put('/books/:bookId/ratings/:ratingId', ...ratingController.updateRating);
+app.delete('/books/:bookId/ratings/:ratingId', ratingController.deleteRating);
 
 
 export default app;
