@@ -1,17 +1,13 @@
 <script>
-    import "../app.css";
-    import { ToastProvider } from "@skeletonlabs/skeleton-svelte";
+  import "../app.css";
 
-    let {children} = $props();
+  let {children, data} = $props();
 </script>
-<ToastProvider>
-  <div class="flex flex-col h-full">
-    <!--        <Header/>-->
 
-    <main class="container mx-auto max-w-2xl grow">
-      {@render children()}
-    </main>
+{#if data.user}
+  <p>Hello {data.user}!</p>
+{/if}
 
-    <!--        <Footer/>-->
-  </div>
-</ToastProvider>
+<main class="container mx-auto max-w-lg">
+  {@render children()}
+</main>
