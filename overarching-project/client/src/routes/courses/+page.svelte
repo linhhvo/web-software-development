@@ -1,33 +1,36 @@
 <script>
-  import { useCourseState } from "$lib/states/courseState.svelte.js";
+    import {useCourseState} from "$lib/states/courseState.svelte.js";
 
-  let courseState = useCourseState();
+    let courseState = useCourseState();
 
-  const addCourse = async (e) => {
-    const courseData = Object.fromEntries(new FormData(e.target));
-    await courseState.add(courseData);
-    e.target.reset();
-    e.preventDefault();
-  };
+    const addCourse = async (e) => {
+        const courseData = Object.fromEntries(new FormData(e.target));
+        await courseState.add(courseData);
+        e.target.reset();
+        e.preventDefault();
+    };
+
+
+    $effect(() => {
+        courseState.getAllCourses();
+    })
 </script>
 
-<form class="space-y-4 flex flex-col" onsubmit={addCourse}>
-  <h2 class="h2 text-2xl font-semibold">Courses</h2>
-  <label for="name" class="label">
-    <span class="label-text">Course Name</span>
-    <input class="input placeholder:italic" type="text" name="name" id="name" placeholder="Enter a course name">
-  </label>
+<svelte:head><title>Courses</title></svelte:head>
 
-  <button class="btn preset-filled-tertiary-500 text-lg" type="submit" value="Add Course">Add Course</button>
+<form class="space-y-4 flex flex-col" onsubmit={addCourse}>
+    <h1 class="h1 text-2xl font-semibold">Courses</h1>
+    <label for="name" class="label">
+        <span class="label-text">Course Name</span>
+        <input class="input placeholder:italic" type="text" name="name" id="name" placeholder="Enter a course name">
+    </label>
+
+    <button class="btn preset-filled-tertiary-500 text-lg" type="submit" value="Add Course">Add Course</button>
 </form>
 
-<h2 class="h2 text-2xl font-semibold mt-8">Existing Courses</h2>
+<!--<h2 class="h2 text-2xl font-semibold mt-8">Existing Courses</h2>-->
 <ul class="list-inside list-disc text-base mt-4 marker:text-secondary-500">
-  {#each courseState.courses as course}
-    <li class="hover:underline decoration-secondary-500"><a href={`/courses/${course.id}`}>{course.name}</a></li>
-  {/each}
+    {#each courseState.courses as course}
+        <li class="hover:underline decoration-secondary-500"><a href={`/courses/${course.id}`}>{course.name}</a></li>
+    {/each}
 </ul>
-
-
-
-

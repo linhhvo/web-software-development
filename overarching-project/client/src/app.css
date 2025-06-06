@@ -1,8 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-html,
-body {
-    @apply h-full;
-}
+@plugin "@tailwindcss/forms";
+
+@import "@skeletonlabs/skeleton";
+@import "@skeletonlabs/skeleton/optional/presets";
+@import "@skeletonlabs/skeleton/themes/rose";
+
+@source "../node_modules/@skeletonlabs/skeleton-svelte/dist";
