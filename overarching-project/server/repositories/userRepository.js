@@ -1,7 +1,7 @@
-// import postgres from 'postgres';
+import postgres from 'postgres';
 import {hash} from 'scrypt';
 
-// const sql = postgres();
+const sql = postgres();
 
 export const add = async (userInfo) => {
     return await sql`INSERT INTO users (email, password_hash)

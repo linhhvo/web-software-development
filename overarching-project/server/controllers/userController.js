@@ -9,7 +9,7 @@ const COOKIE_KEY = "token"
 export const registerUser = async (c) => {
     const user = await c.req.json()
     try {
-        await userRepo.add(user)
+        const result = await userRepo.add(user)
         return c.json({"message": "User added."})
     } catch (e) {
         return c.json({"message": "Error adding user."})
@@ -22,7 +22,7 @@ export const verifyUser = async (c) => {
 
     if (result.length === 0) {
         c.status(401)
-        return c.json({"message": "Incorrect username or password."})
+        return c.json({"message": "Incorrect email or password."})
     }
 
     const user = result[0];
@@ -38,7 +38,7 @@ export const verifyUser = async (c) => {
             httpOnly: true,
             sameSite: "lax"
         })
-        return c.json({"message": "Welcome"})
+        return c.json({"message": "Welcome!"})
     } else {
         c.status(401)
         return c.json({"message": "Incorrect email or password."})
