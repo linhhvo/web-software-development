@@ -1,8 +1,9 @@
-import { Hono } from "@hono/hono";
-import { cors } from "@hono/hono/cors";
-import { logger } from "@hono/hono/logger";
+import {Hono} from "@hono/hono";
+import {cors} from "@hono/hono/cors";
+import {logger} from "@hono/hono/logger";
 import * as courseController from './controllers/courseController.js';
 import * as questionController from './controllers/questionController.js';
+import * as userController from './controllers/userController.js';
 
 
 const app = new Hono();
@@ -27,5 +28,10 @@ app.post('/api/courses/:id/questions', ...questionController.addQuestion);
 app.post('/api/courses/:id/questions/:qId/upvote', questionController.upvoteQuestion);
 // Delete a question in a course
 app.delete('/api/courses/:id/questions/:qId', questionController.deleteQuestion);
+
+// Register users
+app.post("/api/auth/register", userController.registerUser);
+// User login
+app.post("/api/auth/login", userController.verifyUser)
 
 export default app;

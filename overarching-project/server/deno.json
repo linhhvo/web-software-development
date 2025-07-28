@@ -5,7 +5,8 @@
     "zod": "https://deno.land/x/zod@v3.23.8/mod.ts",
     "zValidator": "npm:@hono/zod-validator",
     "@supabase/supabase-js": "jsr:@supabase/supabase-js@2",
-    "dotenv": "https://deno.land/std@0.193.0/dotenv/mod.ts"
+    "dotenv": "https://deno.land/std@0.193.0/dotenv/mod.ts",
+    "scrypt": "jsr:@denorg/scrypt@4.4.4"
   },
   "deploy": {
     "project": "WSD-project",
