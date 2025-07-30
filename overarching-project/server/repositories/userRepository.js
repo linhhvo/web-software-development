@@ -14,3 +14,10 @@ export const getUser = async (userInfo) => {
                      FROM users
                      WHERE email = ${userInfo.email.trim().toLowerCase()}`
 }
+
+export const getId = async (userEmail) => {
+    return await sql`SELECT id
+                     FROM users
+                     WHERE email = ${userEmail};
+    `
+}

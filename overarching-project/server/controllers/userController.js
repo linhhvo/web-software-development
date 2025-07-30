@@ -3,6 +3,7 @@ import {setCookie} from "jsr:@hono/hono@4.6.5/cookie";
 import {verify} from 'scrypt';
 import * as jwt from "jsr:@hono/hono@4.6.5/jwt";
 
+
 const JWT_SECRET = "wsd-project-secret"
 const COOKIE_KEY = "token"
 
@@ -26,6 +27,7 @@ export const verifyUser = async (c) => {
     }
 
     const user = result[0];
+
     const passwordValid = verify(data.password.trim(), user.password_hash)
     if (passwordValid) {
         const payload = {email: user.email}
@@ -43,4 +45,8 @@ export const verifyUser = async (c) => {
         c.status(401)
         return c.json({"message": "Incorrect email or password."})
     }
+}
+
+export const getUserId = async (c) => {
+    return await userRepo.getId(c.user.email)
 }

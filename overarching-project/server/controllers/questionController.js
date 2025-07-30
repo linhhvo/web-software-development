@@ -1,33 +1,40 @@
-import { zValidator } from "zValidator";
+import {zValidator} from "zValidator";
 import * as questionRepo from '../repositories/questionRepository.js';
-import { questionValidator } from "../validators.js";
+import {questionValidator} from "../validators.js";
 
 
 export const getQuestions = async (c) => {
-  const courseId = c.req.param('id');
-  const questions = await questionRepo.getAll(courseId);
-  return c.json(questions);
+    const courseId = c.req.param('id');
+    const questions = await questionRepo.getAll(courseId);
+    return c.json(questions);
 };
 
+export const getOneQuestion = async (c) => {
+    const courseId = c.req.param('id')
+    const questionId = c.req.param('qId');
+    const question = await questionRepo.getOne(courseId, questionId);
+    return c.json(question);
+}
+
 export const addQuestion = [zValidator('json', questionValidator),
-  async (c) => {
-    const courseId = c.req.param('id');
-    const questionData = await c.req.valid('json');
-    const newQuestion = await questionRepo.add(courseId, questionData);
-    return c.json(newQuestion);
-  }
+    async (c) => {
+        const courseId = c.req.param('id');
+        const questionData = await c.req.valid('json');
+        const newQuestion = await questionRepo.add(courseId, questionData);
+        return c.json(newQuestion);
+    }
 ];
 
 export const upvoteQuestion = async (c) => {
-  const courseId = c.req.param('id');
-  const questionId = c.req.param('qId');
-  const updatedQuestion = await questionRepo.upvote(courseId, questionId);
-  return c.json(updatedQuestion);
+    const courseId = c.req.param('id');
+    const questionId = c.req.param('qId');
+    const updatedQuestion = await questionRepo.upvote(courseId, questionId);
+    return c.json(updatedQuestion);
 };
 
 export const deleteQuestion = async (c) => {
-  const courseId = c.req.param('id');
-  const questionId = c.req.param('qId');
-  const deletedQuestion = await questionRepo.remove(courseId, questionId);
-  return c.json(deletedQuestion);
+    const courseId = c.req.param('id');
+    const questionId = c.req.param('qId');
+    const deletedQuestion = await questionRepo.remove(courseId, questionId);
+    return c.json(deletedQuestion);
 };
