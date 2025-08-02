@@ -1,9 +1,9 @@
 <script>
-  import Questions from "$lib/components/Questions.svelte";
-  import {useCourseState} from "$lib/states/courseState.svelte.js";
-  import {useQuestionState} from "$lib/states/questionState.svelte.js";
+    import Questions from "$lib/components/Questions.svelte";
+    import {useCourseState} from "$lib/states/courseState.svelte.js";
+    import {useQuestionState} from "$lib/states/questionState.svelte.js";
 
-  let courseState = useCourseState();
+    let courseState = useCourseState();
     let questionState = useQuestionState();
 
     let {data} = $props();
@@ -24,8 +24,8 @@
 <svelte:head><title>{currentCourse.name}</title></svelte:head>
 
 {#if Object.keys(currentCourse).length === 0}
-    <h2 class="h2 text-3xl font-semibold text-success-500">No course found</h2>
+    <h2 class="h2 text-2xl font-semibold flex justify-center">No course found</h2>
 {:else}
-    <h2 class="h2 text-3xl font-semibold text-success-500 mb-6">{currentCourse.name}</h2>
+    <h2 class="h2 text-2xl font-semibold mb-10 flex ">{currentCourse.name}</h2>
     <Questions/>
 {/if}
