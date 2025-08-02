@@ -1,8 +1,8 @@
 import {Hono} from "@hono/hono";
 import {cors} from "@hono/hono/cors";
 import {logger} from "@hono/hono/logger";
+import {getCookie, setCookie} from "jsr:@hono/hono@4.6.5/cookie";
 import * as jwt from "jsr:@hono/hono@4.6.5/jwt";
-import {getCookie} from "jsr:@hono/hono@4.6.5/cookie";
 import * as courseController from './controllers/courseController.js';
 import * as questionController from './controllers/questionController.js';
 import * as userController from './controllers/userController.js';
@@ -31,12 +31,6 @@ const userMiddleware = async (c, next) => {
     await next();
 };
 
-app.use("/api/courses/:id/questions/:qId/answers/*", jwt.jwt({
-    cookie: COOKIE_KEY,
-    secret: JWT_SECRET
-}));
-app.use("/api/courses/:id/questions/:qId/answers/*", userMiddleware);
-
 // Retrieve all courses
 app.get("/api/courses", courseController.getAllCourses);
 // Retrieve one course based on course ID
@@ -60,9 +54,19 @@ app.delete('/api/courses/:id/questions/:qId', questionController.deleteQuestion)
 // Retrieve all answers for a question
 app.get('/api/courses/:id/questions/:qId/answers', answerController.getAnswers)
 // Add a new answer to a question
-app.post('/api/courses/:id/questions/:qId/answers', ...answerController.addAnswer)
+app.post('/api/courses/:id/questions/:qId/answers', jwt.jwt({
+        cookie: COOKIE_KEY,
+        secret: JWT_SECRET
+    }),
+    userMiddleware,
+    ...answerController.addAnswer)
 // Upvote an answer of a question
-app.post('api/courses/:id/questions/:qId/answers/:aId/upvote', answerController.upvoteAnswer)
+app.post('api/courses/:id/questions/:qId/answers/:aId/upvote', jwt.jwt({
+        cookie: COOKIE_KEY,
+        secret: JWT_SECRET
+    }),
+    userMiddleware,
+    answerController.upvoteAnswer)
 
 // Register users
 app.post("/api/auth/register", userController.registerUser);

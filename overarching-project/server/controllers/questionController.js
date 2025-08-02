@@ -10,11 +10,11 @@ export const getQuestions = async (c) => {
 };
 
 export const getOneQuestion = async (c) => {
-    const courseId = c.req.param('id')
+    const courseId = c.req.param('id');
     const questionId = c.req.param('qId');
     const question = await questionRepo.getOne(courseId, questionId);
-    return c.json(question);
-}
+    return c.json(question[0]);
+};
 
 export const addQuestion = [zValidator('json', questionValidator),
     async (c) => {

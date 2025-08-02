@@ -7,13 +7,13 @@ export const getAll = async (courseId) => {
                      FROM questions
                      WHERE course_id = ${courseId};`;
 };
-
 export const getOne = async (courseId, questionId) => {
     return await sql`SELECT *
                      FROM questions
-                     where course_id = ${courseId}
-                       and id = ${questionId};`
-}
+                     WHERE course_id = ${courseId}
+                       and id = ${questionId};`;
+};
+
 export const add = async (courseId, question) => {
     const addedQuestion = await sql`INSERT INTO questions (course_id, title, text)
                                     VALUES (${courseId}, ${question.title}, ${question.text}) RETURNING *;`;
