@@ -26,6 +26,6 @@
 {#if Object.keys(currentCourse).length === 0}
     <h2 class="h2 text-2xl font-semibold flex justify-center">No course found</h2>
 {:else}
-    <h2 class="h2 text-2xl font-semibold mb-10 flex ">{currentCourse.name}</h2>
+    <h2 class="h2 text-2xl font-semibold mb-7 flex ">{currentCourse.name}</h2>
     <Questions/>
 {/if}

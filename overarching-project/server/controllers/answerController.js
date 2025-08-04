@@ -11,10 +11,10 @@ export const getAnswers = async (c) => {
 
 export const addAnswer = [zValidator('json', answerValidator),
     async (c) => {
-        const questionId = c.req.param('qId')
+        const questionId = c.req.param('qid')
         const answerData = await c.req.valid('json')
         const userId = await userController.getUserId(c)
-        console.log(c.user.email)
+
         if (userId.length === 0) {
             c.status(401)
             return c.json({"message": "Unauthorized."})
@@ -25,7 +25,7 @@ export const addAnswer = [zValidator('json', answerValidator),
     }]
 
 export const upvoteAnswer = async (c) => {
-    const questionId = c.req.param('qId')
+    const questionId = c.req.param('qid')
     const answerId = c.req.param('aId')
     const updatedAnswer = await answerRepo.upvote(questionId, answerId)
     return c.json(updatedAnswer)

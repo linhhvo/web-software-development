@@ -16,7 +16,7 @@
     <label class="label" for="email">
         <span class="label-text mb-3">Email</span>
         <input
-                class="input border"
+                class="input border focus:border-success-700"
                 id="email"
                 name="email"
                 type="email"
@@ -24,7 +24,7 @@
     </label>
     <label class="label" for="password">
         <span class="label-text mb-3">Password</span>
-        <input class="input border" id="password" name="password" type="password"/>
+        <input class="input border focus:border-success-700" id="password" name="password" type="password"/>
     </label>
     <button class="w-full btn preset-filled-tertiary-500" type="submit">
         {data.action === "login" ? "Login" : "Register"}

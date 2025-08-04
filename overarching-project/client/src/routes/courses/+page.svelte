@@ -22,7 +22,8 @@
     <h2 class="h2 text-xl font-semibold">Courses</h2>
     <label for="name" class="label">
         <span class="label-text mb-3">Course Name</span>
-        <input class="input border placeholder:italic placeholder:text-sm placeholder:text-gray-500" type="text"
+        <input class="input border placeholder:italic placeholder:text-sm placeholder:text-gray-500 focus:border-success-700"
+               type="text"
                name="name" id="name"
                placeholder="Enter a course name">
     </label>
@@ -33,6 +34,9 @@
 <h2 class="h2 text-xl font-semibold mt-8">Existing Courses</h2>
 <ul class="list-inside list-disc text-base mt-4 marker:text-secondary-500">
     {#each courseState.courses as course}
-        <li class="hover:underline decoration-secondary-500"><a href={`/courses/${course.id}`}>{course.name}</a></li>
+        <li class="decoration-secondary-500">
+            <a class="hover:underline"
+               href={`/courses/${course.id}`}>{course.name}</a>
+        </li>
     {/each}
 </ul>
