@@ -8,6 +8,10 @@
     if (data.user) {
         userState.user = data.user
     }
+
+    $effect(() => {
+        document.body.classList.add("e2e-ready")
+    })
 </script>
 
 

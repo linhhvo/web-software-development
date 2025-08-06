@@ -21,6 +21,7 @@
         <label class="label" for="text">
             <span class="label-text mb-3">Answer Content</span>
             <textarea
+                    data-testid="answer-content"
                     class="input border focus:border-success-700 placeholder:italic placeholder:text-sm placeholder:text-gray-500"
                     id="text"
                     name="text"

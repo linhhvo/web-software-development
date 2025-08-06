@@ -34,7 +34,7 @@
 <h2 class="h2 text-xl font-semibold mt-8">Existing Courses</h2>
 <ul class="list-inside list-disc text-base mt-4 marker:text-secondary-500">
     {#each courseState.courses as course}
-        <li class="decoration-secondary-500">
+        <li id={course.id} class="decoration-secondary-500">
             <a class="hover:underline"
                href={`/courses/${course.id}`}>{course.name}</a>
         </li>
